@@ -15,13 +15,6 @@ const HttpError = require('../models/http-error');
 //making use of express router 
 const router = express.Router(); //create new router object 
 
-router.all('*', function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    next();
-});
-
 //DEFAULT IN BROWSER IS A GET REQUEST 
 
 //registering a route
@@ -34,9 +27,8 @@ router.all('*', function (req, res, next) {
 //adding contoller to this route 
 router.get('/:pid', placesControllers.getPlaceById);    //get one marker data for a specific mongo id
 router.get('/', placesControllers.getAllPlaces);        //get all the documents in the collection (all marker point documents)
-router.patch('/:placeId',
-[check('description').not().isEmpty || check('img').not().isEmpty()],placesControllers.updatePlace);   //update a specific markers information, have to restrict this route
-
+router.patch('/:placeId',placesControllers.updatePlace);   //update a specific markers information, have to restrict this route
+router.get('/byname/:pointName', placesControllers.getPlaceByName);
 //route and execution block 
 //handles all requests on /api/place/user/any value
 //api/place/user/ nothing works but returns nothing 

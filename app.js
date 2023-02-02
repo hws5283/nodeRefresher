@@ -27,6 +27,17 @@ const app = express();
 //parse any incoming request body and extract any json data and convert to regular js data structures
 //and automatically call next -> next middleware is our own custom routes
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+  
+    next();
+  });
 //configured routes added to middleware 
 //path must start with this string 
 //request to /api/places sent to router 

@@ -8,11 +8,31 @@ const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location')
 const Place = require('../models/place');
 const { default: mongoose } = require('mongoose');
+const place = require('../models/place');
 
+const getPlaceByName = async(req,res,next) =>{
+    const name = req.params.pointName;
+
+    let point;
+
+    try{
+        point = await Place.findOne({title:name});   //find doc with matching name 
+    }catch(err){
+        const error = new HttpError('couldnt find place with that name ', 500);
+        return next(error);
+    }
+
+    if(!point){
+        const error = new HttpError('coulding find place with that name', 404);
+        return next(error);
+    }
+
+    res.json({placebyName: point.toObject({getters:true})});
+}
 //get marker data for specific id 
 const getPlaceById = async(req,res,next)=>{
     //params added by expressjs
-    const placeId = req.params.pid//gets info from url
+    const placeId = req.params.pid;//gets info from url
     //no promise returned 
     let place;
     try{
@@ -51,24 +71,25 @@ const getAllPlaces = async(req,res,next)=>{
 //update a specific markers information (change description and photo...) WE WANT TO RESTRICT THIS ROUTE
 const updatePlace = async(req,res,next) =>{
     const error = validationResult(req);
+    const name = req.params.placeId;  //get name of point
+    console.log(name);
     if(!error.isEmpty()){
         return next(new HttpError('invalid inputs passed', 422));
     }
 
     const newDescription = req.body; //get description from request 
-    const placeId = req.params.placeId;    //place id from request 
+    console.log(newDescription);
 
     let place;
     try{
-        place = await Place.findById(placeId);   //using the mongoose shema, find the place by the id
+        place = await Place.findOne({title:name});   //using the mongoose shema, find the place by the id
         console.log(place);
     }catch(err){
         const error = new HttpError('someting went wrong while updating', 500);
         return next(error);
     }
 
-    place.description = newDescription.description; //set new description, have to use field name here, schema only expects string not object 
-    console.log(newDescription.description);
+    place.description = newDescription.newDescription; //set new description, have to use field name here, schema only expects string not object 
 
     try{
         await place.save();   //save the update
@@ -77,7 +98,7 @@ const updatePlace = async(req,res,next) =>{
         return next(error);
     }
 
-    res.status(200).json({place:place.toObject()});
+    res.status(200).json({place:place.toObject()});  //just log the document 
 
 }
 
@@ -203,6 +224,7 @@ const deletePlace = (req,res,next) =>{
 exports.getPlaceById = getPlaceById;
 exports.getAllPlaces = getAllPlaces;
 exports.updatePlace = updatePlace;
+exports.getPlaceByName = getPlaceByName;
 //exports.updatePlace = updatePlace;
 
 
