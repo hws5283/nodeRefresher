@@ -10,9 +10,10 @@ const placesShema = new mongoose.Schema({
     title:{type:String,required:true},
     yPoint: {type:Number, required: true },
     xPoint:{type:Number, required: true},
-    img: {type:String, required:true},
+    img: {type:Array, required:false},               //changed to array
     //address:{type:String, required:true},            CAUSING UPDATE ERROR, DOES NOT MATCH THE MONGODB EQUIVALENT
-    description:{type:String, required:true}
+    description:{type:String, required:true},
+    link: {type:Array, required: false}
 });
 
 //1. name of model

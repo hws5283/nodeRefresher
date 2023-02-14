@@ -14,6 +14,7 @@ const HttpError = require('../models/http-error');
 
 //making use of express router 
 const router = express.Router(); //create new router object 
+const fileUpload = require('../middleware/file-upload'); //multer object import 
 
 //DEFAULT IN BROWSER IS A GET REQUEST 
 
@@ -29,35 +30,6 @@ router.get('/:pid', placesControllers.getPlaceById);    //get one marker data fo
 router.get('/', placesControllers.getAllPlaces);        //get all the documents in the collection (all marker point documents)
 router.patch('/:placeId',placesControllers.updatePlace);   //update a specific markers information, have to restrict this route
 router.get('/byname/:pointName', placesControllers.getPlaceByName);
-//route and execution block 
-//handles all requests on /api/place/user/any value
-//api/place/user/ nothing works but returns nothing 
-//GET ROUTE 2, get by creator
+router.post('/upload', placesControllers.addImage);                 //used for image upload with cloudinary 
 
-//middleware have access to the request object (req) and response object (res) 
-//and the next middleware function (next)
-//only intrested in get request -> same path as below doesnt matter 
-//router.get('/user/:uid', placesControllers.getPlacesByUserId )
-
-
-//connected with middleware  controller
-//first argument filter (path), after not limited to one middleware - can register multiple on one path and http method
-//some added validation for a new place - register middleware and
-/*
-router.post('/', 
-[check('title').not().isEmpty(), 
-check('description').isLength({min: 5}), 
-check('address').not().isEmpty()], placesControllers.createPlace);
-//exporting configured router 
-*/
-//only intrested in patch requests 
-
-/*
-router.patch('/:pid',
-[check('title').not().isEmpty()], 
-placesControllers.updatePlace );
-*/
-//router.delete('/:pid', placesControllers.deletePlace);
-
-//cannot get error basically no route is defined for the url
 module.exports = router;
