@@ -1,4 +1,5 @@
 const multer = require('multer');
+const Datauri = require('datauri');
 const MIME_TYPE_MAP = {
     'image/png': 'png',
     'image/jpeg': 'jpeg',
@@ -6,22 +7,7 @@ const MIME_TYPE_MAP = {
 }
 
 //configuring multer object 
-const fileUpload = multer({
-    limits: 500000, //(500kb upload ceiling)
-    storage: multer.diskStorage({
-        desitination: (req,file,cb)=>{         //where is the file going?
-            cb(null, '../uploads/images');
-        },
-        filename:(req,file,cb)=>{
-            const ext = MIME_TYPE_MAP[file.mimetype] //get extension
-            cb(null, 'upload' + '.' + ext);
-        }
-    }),
-    fileFilter: (req, file, cb) =>{                     //checking file type here (only accept png,jpeg, or jpg)
-        const isValid = !!MIME_TYPE_MAP[file.mimetype]; // check mapping 
-        let error = isValid ? null : new Error('invalid mime type');
-        cb(error, isValid);   // -> true accept the file
-    }
-});
+const storage = multer.memoryStorage();
+const multerUploads = multer({ storage }).single('image');
 
-module.exports = fileUpload;
+module.exports = multerUploads;

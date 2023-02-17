@@ -21,6 +21,7 @@ const mongoose = require('mongoose');
 const placeRoutes = require('./routes/places-routes');
 const HttpError = require('./models/http-error');  //model we created 
 const usersRoutes = require('./routes/user-routes'); //register as middleware
+//const fileUpload = require('express-fileupload');
 
 const app = express();
 

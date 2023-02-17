@@ -10,8 +10,7 @@ const Place = require('../models/place');
 const { default: mongoose } = require('mongoose');
 const place = require('../models/place');
 const cloudinary = require('../cloudinaryHelper/imageUpload'); //the configed cloudinary object 
-const streamifier = require('streamifier');
-
+const path = require('path');
 
 const getPlaceByName = async(req,res,next) =>{
     const name = req.params.pointName;
@@ -34,7 +33,7 @@ const getPlaceByName = async(req,res,next) =>{
 }
 //get marker data for specific id 
 const getPlaceById = async(req,res,next)=>{
-    //params added by expressjs
+    
     const placeId = req.params.pid;//gets info from url
     //no promise returned 
     let place;
@@ -47,15 +46,15 @@ const getPlaceById = async(req,res,next)=>{
         );
         return next(error);
     }
-    //error handling for not finding a document in database
+   
     if(!place){
         //using MODEL HERE 
         const error = new HttpError('Could not find a place for the provided id. ', 404);
         return next(error);
     }
 
-    //sending back json data, takes any data able to be formed into valid json
-    res.json({place:place.toObject({getters:true}), Headers: "Access-Control-Allow-Origin: *"}); //or just {place}
+   
+    res.json({place:place.toObject({getters:true}), Headers: "Access-Control-Allow-Origin: *"}); 
 };
 
 
@@ -68,18 +67,23 @@ const getAllPlaces = async(req,res,next)=>{
         const error = new HttpError('Could not get all documents', 500);
         return next(error);
     }
-    res.json({mapPlaces:mapPlaces});   //return all marker documents in a list 
+    res.json({mapPlaces:mapPlaces});   
 }
 
-//updates description 
+//updates description of marker, data comes from form marker
 const updatePlace = async(req,res,next) =>{
     const error = validationResult(req);
     const name = req.params.placeId;  //get name of point
+    
+
+    console.log(req.body);
+    
+    /*
     if(!error.isEmpty()){
         return next(new HttpError('invalid inputs passed', 422));
     }
 
-    const newDescription = req.body.description; //get description from request 
+    const newDescription = req.body; //get description from request 
     console.log(newDescription);
 
     let place;
@@ -91,7 +95,7 @@ const updatePlace = async(req,res,next) =>{
         return next(error);
     }
 
-    place.description = newDescription //set new description, have to use field name here, schema only expects string not object 
+    place.description = newDescription.loadedPlace //set new description, have to use field name here, schema only expects string not object 
 
     try{
         await place.save();   //save the update
@@ -100,18 +104,25 @@ const updatePlace = async(req,res,next) =>{
         return next(error);
     }
     
-    res.status(200).json({place:place.toObject()});  //just log the document 
+    res.status(200).json({place:place.toObject()});  
+    */
 
 }
 
+//add to images of a marker data comes from form on updatae page 
 const addImage = async(req,res,next) =>{
+
+    const name = req.params.markerName; 
+    console.log("data stream");
+    console.log('req.body: ', req.file);
+
+    const dUri = req.file.buffer.toString('base64');
+  
+    const send = 'data:image/jpeg;base64,'+ dUri;
     try{
-        const fileStr = req.body.data;      //the image string
-        if(!fileStr){
-            console.log("no file sent ");
-        }
         const uploadResponse = await cloudinary.uploader.upload(
-            fileStr,{
+            send,
+            {
                 upload_preset: 'ml_default'
             }
         )
@@ -121,6 +132,7 @@ const addImage = async(req,res,next) =>{
         console.log(error);
         res.status(500);
     }
+    
 }
 
 exports.getPlaceById = getPlaceById;

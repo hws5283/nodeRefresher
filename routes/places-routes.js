@@ -4,6 +4,7 @@
 //have to import in any file using express logic
 //link this logic to the app.js file - run using npm start 
 const express = require('express');
+const fileUpload = require('express-fileupload');
 
 const {check} = require('express-validator');
 
@@ -14,7 +15,7 @@ const HttpError = require('../models/http-error');
 
 //making use of express router 
 const router = express.Router(); //create new router object 
-const fileUpload = require('../middleware/file-upload'); //multer object import 
+const multurUploads = require('../middleware/file-upload')
 
 //DEFAULT IN BROWSER IS A GET REQUEST 
 
@@ -30,6 +31,6 @@ router.get('/:pid', placesControllers.getPlaceById);    //get one marker data fo
 router.get('/', placesControllers.getAllPlaces);        //get all the documents in the collection (all marker point documents)
 router.patch('/:placeId',placesControllers.updatePlace);   //update a specific markers information, have to restrict this route
 router.get('/byname/:pointName', placesControllers.getPlaceByName);
-router.post('/upload', placesControllers.addImage);                 //used for image upload with cloudinary 
+router.post('/upload/:markerName',multurUploads, placesControllers.addImage);                 //used for image upload with cloudinary 
 
 module.exports = router;
