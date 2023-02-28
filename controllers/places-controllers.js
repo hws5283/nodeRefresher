@@ -6,19 +6,18 @@ const { reset } = require('nodemon');
 const {validationResult} = require('express-validator');
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location')
-const Place = require('../models/place');
+const Place = require('../models/place');           //the place mongoose model
 const { default: mongoose } = require('mongoose');
 const place = require('../models/place');
 const cloudinary = require('../cloudinaryHelper/imageUpload'); //the configed cloudinary object 
 const path = require('path');
 
+//controller used to gather the rest of the information from markers (controller triggered on marker clicks)
 const getPlaceByName = async(req,res,next) =>{
     const name = req.params.pointName;
-
     let point;
-
     try{
-        point = await Place.findOne({title:name});   //find doc with matching name 
+        point = await Place.findOne({title:name}).select(['title','img','description','link']);   //find doc with matching name 
     }catch(err){
         const error = new HttpError('couldnt find place with that name ', 500);
         return next(error);
@@ -58,12 +57,12 @@ const getPlaceById = async(req,res,next)=>{
 };
 
 
-//get all marker data (all documents in db)
+//get coordinates and titles of all documents, other data will be provided by other controllers 
 const getAllPlaces = async(req,res,next)=>{
     let mapPlaces;
     try{
-        mapPlaces = await Place.find({});   //find all documents 
-    }catch(err){
+        mapPlaces = await Place.find({}).select(['yPoint','xPoint', 'title','-_id']);   //find all documents, only need title and coordinates 
+    }catch(err){                                                                        //when this controller is called 
         const error = new HttpError('Could not get all documents', 500);
         return next(error);
     }
@@ -77,69 +76,62 @@ const updatePlace = async(req,res,next) =>{
     
 
     console.log(req.body);
-    
-    /*
-    if(!error.isEmpty()){
-        return next(new HttpError('invalid inputs passed', 422));
-    }
-
-    const newDescription = req.body; //get description from request 
-    console.log(newDescription);
-
-    let place;
-    try{
-        place = await Place.findOne({title:name});   
-        console.log(place);
-    }catch(err){
-        const error = new HttpError('someting went wrong while updating', 500);
-        return next(error);
-    }
-
-    place.description = newDescription.loadedPlace //set new description, have to use field name here, schema only expects string not object 
-
-    try{
-        await place.save();   //save the update
-    }catch(err){
-        const error = new HttpError('could not update place', 500);
-        return next(error);
-    }
-    
-    res.status(200).json({place:place.toObject()});  
-    */
-
 }
 
-//add to images of a marker data comes from form on updatae page 
-const addImage = async(req,res,next) =>{
+//Form update controller 
+const update = async(req,res,next) =>{
 
-    const name = req.params.markerName; 
-    console.log("data stream");
-    console.log('req.body: ', req.file);
+    const name = req.params.markerName; // name of marker from params
+    let deliveryUrl = "";
+    let point;
 
-    const dUri = req.file.buffer.toString('base64');
-  
-    const send = 'data:image/jpeg;base64,'+ dUri;
     try{
-        const uploadResponse = await cloudinary.uploader.upload(
-            send,
-            {
-                upload_preset: 'ml_default'
-            }
-        )
-
-        console.log(uploadResponse);
-    }catch(error){
-        console.log(error);
-        res.status(500);
+         point = await Place.findOne({title:name});
+    }catch(err){
+        const error = new HttpError('Something went wrong in the addImage controller', 500);
+        return next(err);
     }
-    
+
+    //we have a point...
+    if(point){
+         //if we have a file....
+        if(req.file){
+            const dUri = req.file.buffer.toString('base64');
+            const send = 'data:image/jpeg;base64,'+ dUri;
+            try{
+                const uploadResponse = await cloudinary.uploader.upload(
+                 send,
+                {
+                    upload_preset: 'ml_default'
+                }
+            )
+            deliveryUrl = uploadResponse.url;
+            point.img.push(deliveryUrl);            //add to img array 
+            }catch(error){
+                 console.log(error);
+                res.status(500);
+            }
+        } 
+        //if we have description....
+        if(req.body.description){
+            point.description = req.body.description;    //set description
+        }
+
+        try{
+            await point.save();
+        }
+        catch(err){
+            const error = new HttpError("could not update place with form data", 500);
+            return(err);
+        }
+    }
 }
 
 exports.getPlaceById = getPlaceById;
 exports.getAllPlaces = getAllPlaces;
 exports.updatePlace = updatePlace;
 exports.getPlaceByName = getPlaceByName;
-exports.addImage = addImage;
+exports.update = update;
 //exports.updatePlace = updatePlace;
 
 

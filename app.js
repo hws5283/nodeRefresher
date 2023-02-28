@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 //request to /api/places sent to router 
 //A router behaves like middleware itself so it can be used as an argument
 //the router uses controllers 
-app.use('/api/places',placeRoutes);  // => /api/places/...
+app.use('/api/places',placeRoutes);  //register router obect as a middleware to '/api/places/......
 //app.use('/api/allplaces', placeRoutes);
 app.use('/api/users',usersRoutes); // forward requests to user-routes.js
 

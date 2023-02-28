@@ -7,15 +7,14 @@ const schema = mongoose.Schema;
 //image is always a URL IN THE DATABASE NOT A FILE
 //THE SCHEMA 
 const placesShema = new mongoose.Schema({
-    title:{type:String,required:true},
+    title:{type:String,required:true},              //schema valiation at application level 
     yPoint: {type:Number, required: true },
     xPoint:{type:Number, required: true},
     img: {type:Array, required:false},               //changed to array
-    //address:{type:String, required:true},            CAUSING UPDATE ERROR, DOES NOT MATCH THE MONGODB EQUIVALENT
     description:{type:String, required:true},
     link: {type:Array, required: false}
 });
 
-//1. name of model
-//2. schema for model
+
+//THE MODEL
 module.exports = mongoose.model('Place', placesShema);

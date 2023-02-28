@@ -1,5 +1,4 @@
 const multer = require('multer');
-const Datauri = require('datauri');
 const MIME_TYPE_MAP = {
     'image/png': 'png',
     'image/jpeg': 'jpeg',
