@@ -3,7 +3,7 @@
 //no need to import express not using any features from express 
 //want to link these functions to routes registerd in different file 
 const { reset } = require('nodemon');
-const {validationResult} = require('express-validator');
+const {validationResult} = require('express-validator'); 
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location')
 const Place = require('../models/place');           //the place mongoose model
@@ -80,13 +80,17 @@ const updatePlace = async(req,res,next) =>{
 
 //Form update controller 
 const update = async(req,res,next) =>{
-
+    //const errors = validationResult(req);  //look into req object finding errors based on parameters in middleware
+    //if(!errors.isEmpty){
+    //    throw new HttpError('Invalid inputs passed', 422);
+    //}
+    console.log(req.files);
     const name = req.params.markerName; // name of marker from params
     let deliveryUrl = "";
     let point;
 
     try{
-         point = await Place.findOne({title:name});
+         point = await Place.findOne({title:name});    //try to find the point in the database
     }catch(err){
         const error = new HttpError('Something went wrong in the addImage controller', 500);
         return next(err);
@@ -94,25 +98,35 @@ const update = async(req,res,next) =>{
 
     //we have a point...
     if(point){
-         //if we have a file....
-        if(req.file){
-            const dUri = req.file.buffer.toString('base64');
-            const send = 'data:image/jpeg;base64,'+ dUri;
-            try{
-                const uploadResponse = await cloudinary.uploader.upload(
-                 send,
-                {
-                    upload_preset: 'ml_default'
+         //if we have an image file or files
+        if(req.files){
+            try{  //try to upload all images
+                for(const file of req.files){
+                    let dUri = file.buffer.toString('base64');
+                    let send = 'data:image/jpeg;base64,'+ dUri;
+
+                    const uploadResponse = await cloudinary.uploader.upload(
+                        send,
+                       {
+                           upload_preset: 'ml_default'
+                       }
+                    )
+
+                    if(uploadResponse){
+                        deliveryUrl = uploadResponse.url;
+                        point.img.push(deliveryUrl);            //add to img array 
+                    }
                 }
-            )
-            deliveryUrl = uploadResponse.url;
-            point.img.push(deliveryUrl);            //add to img array 
+
+            await point.save();
             }catch(error){
                  console.log(error);
                 res.status(500);
             }
         } 
+
         //if we have description....
+        /*
         if(req.body.description){
             point.description = req.body.description;    //set description
         }
@@ -124,9 +138,12 @@ const update = async(req,res,next) =>{
             const error = new HttpError("could not update place with form data", 500);
             return(err);
         }
+        */
+
+        res.json({test: 'testing'});
+    //}
     }
 }
-
 exports.getPlaceById = getPlaceById;
 exports.getAllPlaces = getAllPlaces;
 exports.updatePlace = updatePlace;

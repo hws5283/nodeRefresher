@@ -7,6 +7,6 @@ const MIME_TYPE_MAP = {
 
 //configuring multer object 
 const storage = multer.memoryStorage();
-const multerUploads = multer({ storage }).single('image');
+const multerUploads = multer({ storage }).array('image', 4);    //4 image upload max 
 
 module.exports = multerUploads;

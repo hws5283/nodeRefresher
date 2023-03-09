@@ -11,8 +11,9 @@
 //routing - want to listen to certain http method and path combination and run different code
 //route requests to certain requests 
 //MIDDLEWARES PARSED FROM TOP TO BOTTOM OF THE FILE
-
-
+//--------------------------------------------
+//START THIS APP BY EXECUTING THE APP.JS FILE 
+//--------------------------------------------
 const express = require('express'); //store express functionality
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -68,7 +69,7 @@ app.use((error,req,res,next) =>{
 });
 
 //establishing connection with mongoose, next 
-mongoose.connect('mongodb+srv://hws442:Oakwood88!@pointData.7oisrrw.mongodb.net/?retryWrites=true&w=majority').then(()=>{
+mongoose.connect('mongodb+srv://hws442:Oakwood88!@pointData.7oisrrw.mongodb.net/test?retryWrites=true&w=majority').then(()=>{
     app.listen(5000);
 }).catch(err => {
     console.log("error");
