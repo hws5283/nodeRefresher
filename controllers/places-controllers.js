@@ -118,30 +118,24 @@ const update = async(req,res,next) =>{
                     }
                 }
 
-            await point.save();
             }catch(error){
                  console.log(error);
                 res.status(500);
             }
         } 
 
-        //if we have description....
-        /*
         if(req.body.description){
             point.description = req.body.description;    //set description
         }
 
         try{
-            await point.save();
+            await point.save();                     //save point 
         }
         catch(err){
             const error = new HttpError("could not update place with form data", 500);
             return(err);
         }
-        */
-
         res.json({test: 'testing'});
-    //}
     }
 }
 exports.getPlaceById = getPlaceById;
