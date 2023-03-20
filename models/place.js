@@ -12,6 +12,7 @@ const placesShema = new mongoose.Schema({
     xPoint:{type:Number, required: true},
     img: {type:Array, required:false},               //changed to array
     description:{type:String, required:true},
+    area:{type:String, required: true},
     link: {type:Array, required: false}
 });
 

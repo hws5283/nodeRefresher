@@ -61,7 +61,7 @@ const getPlaceById = async(req,res,next)=>{
 const getAllPlaces = async(req,res,next)=>{
     let mapPlaces;
     try{
-        mapPlaces = await Place.find({}).select(['yPoint','xPoint', 'title','-_id']);   //find all documents, only need title and coordinates 
+        mapPlaces = await Place.find({}).select(['yPoint','xPoint', 'title', 'area','-_id']);   //find all documents, only need title and coordinates 
     }catch(err){                                                                        //when this controller is called 
         const error = new HttpError('Could not get all documents', 500);
         return next(error);
