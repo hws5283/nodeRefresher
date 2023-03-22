@@ -84,7 +84,6 @@ const update = async(req,res,next) =>{
     //if(!errors.isEmpty){
     //    throw new HttpError('Invalid inputs passed', 422);
     //}
-    console.log(req.files);
     const name = req.params.markerName; // name of marker from params
     let deliveryUrl = "";
     let point;
