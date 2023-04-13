@@ -1,0 +1,13 @@
+{
+    "env":{
+        "DB_USER": "hws442",
+        "DB_PASSWORD": "Oakwood88!",
+        "DB_NAME": "test",
+
+        "CLOUDINARY_CLOUD_NAME": "dog5jmb4w",
+        "CLOUDINARY_API_SECRET": "3yXVrT2J-aMh44PrOUeKG0AQmhY",
+        "CLOUDINARY_API_KEY": "386183193491185",
+
+        "JWT_KEY": "privateKey70999!!"
+    }
+}

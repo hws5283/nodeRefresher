@@ -68,8 +68,9 @@ app.use((error,req,res,next) =>{
     res.json({message:error.message} || 'Unknown error has occured');
 });
 
+//DB CONNECTION, certain password, username, database ect..
 //establishing connection with mongoose, next 
-mongoose.connect('mongodb+srv://hws442:Oakwood88!@pointData.7oisrrw.mongodb.net/test?retryWrites=true&w=majority').then(()=>{
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@pointData.7oisrrw.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`).then(()=>{
     app.listen(5000);
 }).catch(err => {
     console.log("error");

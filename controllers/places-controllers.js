@@ -80,10 +80,7 @@ const updatePlace = async(req,res,next) =>{
 
 //Form update controller 
 const update = async(req,res,next) =>{
-    //const errors = validationResult(req);  //look into req object finding errors based on parameters in middleware
-    //if(!errors.isEmpty){
-    //    throw new HttpError('Invalid inputs passed', 422);
-    //}
+    
     const name = req.params.markerName; // name of marker from params
     let deliveryUrl = "";
     let point;
@@ -113,7 +110,7 @@ const update = async(req,res,next) =>{
 
                     if(uploadResponse){
                         deliveryUrl = uploadResponse.url;
-                        point.img.push(deliveryUrl);            //add to img array 
+                        point.img.push(deliveryUrl);            //add images
                     }
                 }
 
@@ -125,6 +122,10 @@ const update = async(req,res,next) =>{
 
         if(req.body.description){
             point.description = req.body.description;    //set description
+        }
+
+        if(req.body.link){
+            point.link.push(req.body.link);       //add link
         }
 
         try{
