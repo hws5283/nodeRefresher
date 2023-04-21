@@ -18,4 +18,4 @@ const placesShema = new mongoose.Schema({
 
 
 //THE MODEL
-module.exports = mongoose.model('Place', placesShema);
+module.exports = mongoose.model('Place', placesShema);  //SINGULAR version of collection name 

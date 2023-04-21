@@ -7,10 +7,9 @@ const {validationResult} = require('express-validator');
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location')
 const Place = require('../models/place');           //the place mongoose model
+const Title = require('../models/title');
 const { default: mongoose } = require('mongoose');
-const place = require('../models/place');
 const cloudinary = require('../cloudinaryHelper/imageUpload'); //the configed cloudinary object 
-const path = require('path');
 
 //controller used to gather the rest of the information from markers (controller triggered on marker clicks)
 const getPlaceByName = async(req,res,next) =>{
@@ -32,7 +31,7 @@ const getPlaceByName = async(req,res,next) =>{
 }
 //get marker data for specific id 
 const getPlaceById = async(req,res,next)=>{
-    
+
     const placeId = req.params.pid;//gets info from url
     //no promise returned 
     let place;
@@ -53,7 +52,8 @@ const getPlaceById = async(req,res,next)=>{
     }
 
    
-    res.json({place:place.toObject({getters:true}), Headers: "Access-Control-Allow-Origin: *"}); 
+    res.json({place:place.toObject({getters:true})}); 
+    //res.json({place:place.toObject({getters:true}), Headers: "Access-Control-Allow-Origin: *"}); 
 };
 
 
@@ -69,13 +69,17 @@ const getAllPlaces = async(req,res,next)=>{
     res.json({mapPlaces:mapPlaces});   
 }
 
-//updates description of marker, data comes from form marker
-const updatePlace = async(req,res,next) =>{
-    const error = validationResult(req);
-    const name = req.params.placeId;  //get name of point
-    
 
-    console.log(req.body);
+const getMarkerTitles = async(req,res,next) =>{
+    let markerTitles;
+    try{
+        markerTitles = await Title.find({});
+
+    }catch(err){
+        const error = new HttpError('Could not get all documents', 500);
+        return next(error);
+    }
+    res.json(markerTitles);
 }
 
 //Form update controller 
@@ -138,9 +142,11 @@ const update = async(req,res,next) =>{
         res.json({test: 'testing'});
     }
 }
+
+
+exports.getMarkerTitles = getMarkerTitles;
 exports.getPlaceById = getPlaceById;
 exports.getAllPlaces = getAllPlaces;
-exports.updatePlace = updatePlace;
 exports.getPlaceByName = getPlaceByName;
 exports.update = update;
 //exports.updatePlace = updatePlace;

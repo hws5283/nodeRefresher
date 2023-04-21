@@ -26,9 +26,9 @@ const checkAuth = require('../middleware/check-auth');
 //"routing" - how is this application responding to a client request to a particular endpoint???
 //add middleware and routes....SEE MULTER MODULE
 //UNPROTECTED ROUTES
+router.get('/titles', placesControllers.getMarkerTitles);
 router.get('/:pid', placesControllers.getPlaceById);    //get one marker data for a specific mongo id
 router.get('/', placesControllers.getAllPlaces);        //get all the documents in the collection (all marker point documents)
-router.patch('/:placeId',placesControllers.updatePlace);   //update a specific markers information, have to restrict this route
 router.get('/byname/:pointName', placesControllers.getPlaceByName);
 //registering multiple middlewares on http method/path combination
 //executed left -> right
