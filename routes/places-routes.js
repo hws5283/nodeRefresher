@@ -27,6 +27,7 @@ const checkAuth = require('../middleware/check-auth');
 //add middleware and routes....SEE MULTER MODULE
 //UNPROTECTED ROUTES
 router.get('/titles', placesControllers.getMarkerTitles);
+router.get('/atlasEnt/:areaName', placesControllers.getAtlasTitles);
 router.get('/:pid', placesControllers.getPlaceById);    //get one marker data for a specific mongo id
 router.get('/', placesControllers.getAllPlaces);        //get all the documents in the collection (all marker point documents)
 router.get('/byname/:pointName', placesControllers.getPlaceByName);

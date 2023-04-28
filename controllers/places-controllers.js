@@ -8,6 +8,7 @@ const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location')
 const Place = require('../models/place');           //the place mongoose model
 const Title = require('../models/title');
+const Atlas = require('../models/atlas');
 const { default: mongoose } = require('mongoose');
 const cloudinary = require('../cloudinaryHelper/imageUpload'); //the configed cloudinary object 
 
@@ -82,6 +83,20 @@ const getMarkerTitles = async(req,res,next) =>{
     res.json(markerTitles);
 }
 
+
+const getAtlasTitles = async(req,res,next) =>{
+    const areaName = req.params.areaName; 
+    let atlasTitles;
+    try{
+        atlasTitles = await Atlas.find({area: areaName});
+
+    }catch(err){
+        const error = new HttpError('Could not get all documents', 500);
+        return next(error);
+    }
+    res.json(atlasTitles);
+}
+
 //Form update controller 
 const update = async(req,res,next) =>{
     
@@ -145,6 +160,7 @@ const update = async(req,res,next) =>{
 
 
 exports.getMarkerTitles = getMarkerTitles;
+exports.getAtlasTitles = getAtlasTitles
 exports.getPlaceById = getPlaceById;
 exports.getAllPlaces = getAllPlaces;
 exports.getPlaceByName = getPlaceByName;
