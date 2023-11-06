@@ -5,7 +5,6 @@
 const { reset } = require('nodemon');
 const {validationResult} = require('express-validator'); 
 const HttpError = require('../models/http-error');
-const getCoordsForAddress = require('../util/location')
 const Place = require('../models/place');           //the place mongoose model
 const Title = require('../models/title');
 const Atlas = require('../models/atlas');
@@ -59,6 +58,7 @@ const getPlaceById = async(req,res,next)=>{
 
 
 //get coordinates and titles of all documents, other data will be provided by other controllers 
+//initially renders the markers 
 const getAllPlaces = async(req,res,next)=>{
     let mapPlaces;
     try{
